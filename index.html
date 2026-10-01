@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QQ Music AI Rhythm</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="game normal-mode" id="musicPage">
+
+        <!-- 背景 -->
+        <div class="background"></div>
+
+        <!-- 顶部 -->
+        <header>
+            <div class="back">‹</div>
+
+            <div class="song-info">
+                <div class="song-title">Last Festival</div>
+                <div class="artist">TWS</div>
+            </div>
+
+            <div class="header-actions">
+    <div class="play-ai" id="enterGame">Play<sup>★</sup></div>
+    <div class="more">⋮</div>
+</div>
+        </header>
+
+        <!-- 歌词：由 script.js 的 lyrics 数组动态生成 -->
+        <div class="lyrics" id="lyrics"></div>
+
+        <!-- 游戏区域 -->
+        <div id="game-area"></div>
+
+        <!-- 分数 -->
+        <div class="score">
+            <span id="score">0</span>
+        </div>
+
+        <!-- 提示 -->
+        <div id="feedback"></div>
+
+        <!-- 播放器 -->
+        <div class="player">
+
+            <div class="progress">
+                <span id="currentTime">00:00</span>
+
+                <div class="progress-line" id="progressLine">
+                    <div class="progress-current" id="progressCurrent"></div>
+                </div>
+
+                <span id="durationTime">00:00</span>
+            </div>
+
+            <div class="controls">
+                <button>◀</button>
+
+                <button id="playButton" class="play">
+                    ▶
+                </button>
+
+                <button>▶</button>
+            </div>
+
+        </div>
+
+        <!-- 音乐 -->
+        <audio id="music" src="assets/music.mp3"></audio>
+
+    </div>
+
+    <canvas id="fireworks"></canvas>
+    <script src="script.js" defer></script>
+</body>
+</html>
+
+/* ============================================================
+   点击烟花 Canvas
+   ============================================================ */
+
+#fireworks {
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    pointer-events: none;
+
+    z-index: 2000;
+}
+<!-- 启动页 -->
+<div id="splash-screen">
+
+    <img
+        src="assets/splash-logo.png"
+        class="splash-logo"
+        alt="QQ音乐"
+    >
+
+    <div class="splash-member">
+        <div class="splash-title">
+            ◆ SVIP7
+        </div>
+
+        <div class="splash-subtitle">
+            超级会员 · 尊享九权益
+        </div>
+    </div>
+
+    <div class="splash-powered">
+        Powered by　♧ 天琴实验室　·　♫ 银河音效　·　◐ Dolby Atmos
+    </div>
+
+</div>
+<!-- =========================
+     QQ音乐首页
+========================= -->
+
+<div id="home-page">
+
+    <!-- 顶部搜索栏 -->
+    <div class="home-top">
+
+        <div class="search-box">
+            <span class="search-icon">⌕</span>
+            <span>徐太志原版冬日愁绪咋被翻新的</span>
+        </div>
+
+        <div class="top-icon">◉</div>
+        <div class="top-money">¥</div>
+
+    </div>
+
+
+    <!-- 分类导航 -->
+    <div class="home-nav">
+
+        <div class="nav-item active">
+            推荐
+        </div>
+
+        <div class="nav-item">
+            刷歌
+        </div>
+
+        <div class="nav-item">
+            乐馆
+        </div>
+
+        <div class="nav-item">
+            听书
+        </div>
+
+        <div class="nav-item">
+            AI作歌
+        </div>
+
+        <div class="nav-item">
+            金币
+        </div>
+
+    </div>
+
+
+    <!-- 推荐卡片 -->
+    <div class="recommend-cards">
+
+        <div class="recommend-card card-blue">
+
+            <div class="card-title">
+                For<br>
+                You
+            </div>
+
+            <div class="card-song">
+                猜你喜欢·沉浸刷歌
+            </div>
+
+            <div class="card-artist">
+                Chocolate - 伯贤 (백현)
+            </div>
+
+            <div class="card-play">
+                ▶
+            </div>
+
+        </div>
+
+
+        <div class="recommend-card card-orange">
+
+            <div class="card-title">
+                Daily<br>
+                30
+            </div>
+
+            <div class="card-song">
+                每日30首
+            </div>
+
+            <div class="card-artist">
+                aespa
+            </div>
+
+            <div class="card-play">
+                ▶
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 热歌 -->
+    <div class="home-section">
+
+        <div class="section-title">
+            您的热歌来新单啦 ✨
+            <span>▶</span>
+        </div>
+
+
+        <!-- 第一首：我们的目标歌曲 -->
+        <div
+            class="song-row target-song"
+            id="last-festival-song"
+        >
+
+            <div class="song-cover">
+                < img src="assets/game-bg.png" alt="">
+            </div>
+
+            <div class="song-info">
+
+                <div class="song-name">
+                    最后的庆典
+                </div>
+
+                <div class="song-artist">
+                    TWS
+                </div>
+
+            </div>
+
+            <div class="song-like">
+                ♡
+            </div>
+
+        </div>
+
+
+        <div class="song-row">
+
+            <div class="song-cover">
+                < img src="assets/game-bg.png" alt="">
+            </div>
+
+            <div class="song-info">
+
+                <div class="song-name">
+                    Stay Up
+                </div>
+
+                <div class="song-artist">
+                    伯贤 / Beenzino
+                </div>
+
+            </div>
+
+            <div class="song-like">
+                ♡
+            </div>
+
+        </div>
+
+
+        <div class="song-row">
+
+            <div class="song-cover">
+                < img src="assets/game-bg.png" alt="">
+            </div>
+
+            <div class="song-info">
+
+                <div class="song-name">
+                    1 TO 13
+                </div>
+
+                <div class="song-artist">
+                    SEVENTEEN
+                </div>
+
+            </div>
+
+            <div class="song-like">
+                ♡
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 典藏区域 -->
+    <div class="home-section collection-section">
+
+        <div class="section-title">
+            典藏星光卡即刻拥有
+        </div>
+
+        <div class="collection-cards">
+
+            <div class="collection-card">
+                < img src="assets/game-bg.png" alt="">
+            </div>
+
+            <div class="collection-card">
+                < img src="assets/game-bg.png" alt="">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+
+        <div class="bottom-item active">
+            <div>⌂</div>
+            <span>首页</span>
+        </div>
+
+        <div class="bottom-item">
+            <div>◉</div>
+            <span>视频</span>
+        </div>
+
+        <div class="bottom-item">
+            <div>◉</div>
+            <span>刷歌</span>
+        </div>
+
+        <div class="bottom-item">
+            <div>☆</div>
+            <span>星光</span>
+        </div>
+
+        <div class="bottom-item">
+            <div>♙</div>
+            <span>我的</span>
+        </div>
+
+    </div>
+
+</div>
+<!-- =========================
+     歌曲详情页
+========================= -->
+
+<div id="song-detail-page">
+
+    <!-- 顶部 -->
+    <div class="detail-top">
+
+        <button id="detail-back">
+            ‹
+        </button>
+
+        <div class="detail-actions">
+            ♡　↗
+        </div>
+
+    </div>
+
+
+    <!-- 黑胶唱片区域 -->
+
+    <div class="record-area">
+
+        <div class="record">
+
+            <div class="record-center">
+
+                <img
+                    src="assets/game-bg.png"
+                    alt=""
+                >
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 歌曲信息 -->
+
+    <div class="detail-info">
+
+        <div class="detail-title">
+            最后的庆典 (Last Festival)
+        </div>
+
+        <div class="detail-artist">
+            TWS
+        </div>
+
+    </div>
+
+
+    <!-- 功能按钮 -->
+
+    <div class="detail-functions">
+
+        <span>♧<small>1049³</small></span>
+
+        <span>▣<small>On</small></span>
+
+        <span>↓</span>
+
+        <span>☷<small>热评</small></span>
+
+        <span>•••</span>
+
+    </div>
+
+
+    <!-- 进度条 -->
+
+    <div class="detail-progress">
+
+        <div class="progress-dot"></div>
+
+        <div class="progress-line"></div>
+
+        <div class="detail-time">
+
+            <span>00:00</span>
+
+            <span>03:11</span>
+
+        </div>
+
+    </div>
+
+
+    <!-- 播放控制 -->
+
+    <div class="detail-controls">
+
+        <button>↻</button>
+
+        <button>◀</button>
+
+        <button
+            id="detail-play"
+            class="detail-play-button"
+        >
+            ▶
+        </button>
+
+        <button>▶</button>
+
+        <button>☷</button>
+
+    </div>
+
+</div>

@@ -1,0 +1,1833 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #061a35;
+    font-family: Arial, sans-serif;
+}
+
+.game {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    color: white;
+}
+
+/* 背景 */
+
+.background {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(5, 25, 55, 0.35),
+            rgba(5, 25, 55, 0.45)
+        ),
+        url("assets/game-bg.png");
+
+    background-size: cover;
+    background-position: center;
+
+    filter: blur(2px);
+    transform: scale(1.05);
+}
+
+/* 顶部 */
+
+header {
+    position: absolute;
+    top: 45px;
+    left: 25px;
+    right: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    z-index: 5;
+}
+
+.back,
+.more {
+    font-size: 38px;
+    width: 40px;
+    text-align: center;
+}
+
+.song-info {
+    text-align: center;
+}
+
+.song-title {
+    font-size: 27px;
+    font-weight: 600;
+}
+
+.artist {
+    margin-top: 5px;
+    font-size: 17px;
+    opacity: 0.75;
+}
+
+/* 歌词 */
+
+.lyrics {
+    position: absolute;
+
+    top: 180px;
+    left: 0;
+    right: 0;
+
+    height: 240px;
+    overflow: hidden;
+
+    text-align: center;
+
+    z-index: 5;
+
+    scrollbar-width: none;
+}
+
+.lyrics::-webkit-scrollbar {
+    display: none;
+}
+
+.lyric {
+    margin: 15px 0;
+
+    font-size: 22px;
+    opacity: 0.45;
+}
+
+.lyric.active {
+    font-size: 30px;
+    opacity: 1;
+}
+
+.lyric-kr,
+.lyric-cn {
+    display: block;
+}
+
+.lyric-cn {
+    margin-top: 6px;
+    font-size: 0.68em;
+}
+
+.lyric-spacer {
+    height: 88px;
+    pointer-events: none;
+}
+
+/* 游戏区域 */
+
+#game-area {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+}
+
+/* ============================================================
+   音乐节奏点 —— 初版风格
+   ============================================================ */
+
+   .rhythm-point {
+
+    --point-color: #31C27C;
+
+    position: fixed;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    border: 2px solid rgba(100, 255, 220, 0.9);
+
+    box-shadow:
+        0 0 8px white,
+        0 0 18px #72ffd7,
+        0 0 32px rgba(100, 255, 220, 0.55);
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+
+    cursor: pointer;
+
+    z-index: 999;
+
+    touch-action: manipulation;
+
+    user-select: none;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.18s ease;
+
+    animation:
+        pulse
+        1.4s
+        ease-in-out
+        infinite;
+}
+
+
+/* 中心小亮点 */
+
+.rhythm-point::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    transform:
+        translate(-50%, -50%);
+
+    box-shadow:
+        0 0 8px white,
+        0 0 14px white;
+}
+
+
+/* 外圈 */
+
+.rhythm-point::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(100, 255, 220, 0.65);
+
+    transform:
+        translate(-50%, -50%);
+
+    animation:
+        pointRipple
+        1.6s
+        ease-out
+        infinite;
+}
+
+
+/* 呼吸 */
+
+@keyframes pulse {
+
+    0% {
+
+        box-shadow:
+            0 0 8px white,
+            0 0 18px #72ffd7,
+            0 0 30px rgba(100, 255, 220, 0.45);
+
+    }
+
+    50% {
+
+        box-shadow:
+            0 0 12px white,
+            0 0 28px #72ffd7,
+            0 0 42px rgba(100, 255, 220, 0.65);
+
+    }
+
+    100% {
+
+        box-shadow:
+            0 0 8px white,
+            0 0 18px #72ffd7,
+            0 0 30px rgba(100, 255, 220, 0.45);
+
+    }
+}
+
+
+/* 外圈扩散 */
+
+@keyframes pointRipple {
+
+    0% {
+
+        width: 100%;
+        height: 100%;
+
+        opacity: 0.6;
+
+    }
+
+    70% {
+
+        width: 180%;
+        height: 180%;
+
+        opacity: 0.15;
+
+    }
+
+    100% {
+
+        width: 210%;
+        height: 210%;
+
+        opacity: 0;
+
+    }
+
+}
+
+/* ============================================================
+   音乐点中心高光
+   ============================================================ */
+
+.rhythm-point::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    transform:
+        translate(-50%, -50%);
+
+    box-shadow:
+
+        0 0 6px white,
+
+        0 0 14px white,
+
+        0 0 25px
+        var(--point-color);
+}
+
+
+/* ============================================================
+   外圈扩散波纹
+   ============================================================ */
+
+.rhythm-point::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        var(--point-color);
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+
+    opacity: 0.65;
+
+    animation:
+        rhythmRipple
+        1.5s
+        ease-out
+        infinite;
+}
+
+
+/* ============================================================
+   音乐点呼吸
+   ============================================================ */
+
+@keyframes rhythmBreath {
+
+    0% {
+
+        filter:
+            brightness(0.9);
+
+        box-shadow:
+
+            0 0 6px #ffffff,
+
+            0 0 14px
+            var(--point-color),
+
+            0 0 28px
+            rgba(49, 194, 124, 0.65);
+
+    }
+
+    50% {
+
+        filter:
+            brightness(1.35);
+
+        box-shadow:
+
+            0 0 9px #ffffff,
+
+            0 0 22px
+            var(--point-color),
+
+            0 0 45px
+            rgba(49, 194, 124, 0.9),
+
+            0 0 70px
+            rgba(49, 194, 124, 0.3);
+
+    }
+
+    100% {
+
+        filter:
+            brightness(0.9);
+
+        box-shadow:
+
+            0 0 6px #ffffff,
+
+            0 0 14px
+            var(--point-color),
+
+            0 0 28px
+            rgba(49, 194, 124, 0.65);
+
+    }
+}
+
+
+/* ============================================================
+   外圈波纹
+   ============================================================ */
+
+@keyframes rhythmRipple {
+
+    0% {
+
+        width: 100%;
+        height: 100%;
+
+        opacity: 0.65;
+
+    }
+
+    70% {
+
+        width: 220%;
+        height: 220%;
+
+        opacity: 0.15;
+
+    }
+
+    100% {
+
+        width: 260%;
+        height: 260%;
+
+        opacity: 0;
+
+    }
+
+}
+
+/* 分数 */
+
+.score {
+    position: absolute;
+
+    top: 120px;
+    right: 30px;
+
+    font-size: 22px;
+
+    z-index: 6;
+}
+
+/* 点击反馈 */
+
+#feedback {
+    position: absolute;
+
+    left: 50%;
+    top: 55%;
+
+    transform: translate(-50%, -50%);
+
+    font-size: 32px;
+    font-weight: bold;
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+/* 播放器 */
+
+.player {
+    position: absolute;
+
+    left: 40px;
+    right: 40px;
+    bottom: 55px;
+
+    padding: 25px;
+
+    border-radius: 35px;
+
+    background: rgba(180, 200, 220, 0.35);
+
+    backdrop-filter: blur(25px);
+
+    border: 2px solid rgba(255,255,255,0.35);
+
+    z-index: 8;
+}
+
+.progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 14px;
+}
+
+.progress-line {
+    position: relative;
+    flex: 1;
+    height: 4px;
+
+    background: rgba(255,255,255,0.7);
+
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.progress-current {
+    position: relative;
+    width: 0%;
+    height: 100%;
+
+    background: #00e89a;
+
+    border-radius: 5px;
+}
+
+.progress-current::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00e89a;
+    transform: translate(50%, -50%);
+    pointer-events: none;
+}
+
+.controls {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 45px;
+
+    margin-top: 20px;
+}
+
+.controls button {
+    border: none;
+    background: none;
+
+    color: white;
+
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.controls .play {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    color: black;
+
+    font-size: 25px;
+}
+/* =========================
+   音乐节奏点
+   ========================= */
+
+   .music-point {
+    --point-color: #31C27C;
+
+    position: absolute;
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    background: var(--point-color);
+
+    box-shadow:
+        0 0 8px var(--point-color),
+        0 0 20px var(--point-color),
+        0 0 40px color-mix(in srgb, var(--point-color), transparent 45%);
+
+    cursor: pointer;
+
+    z-index: 50;
+
+    transform: translate(-50%, -50%) scale(0.75);
+
+    opacity: 0;
+
+    transition:
+        opacity 0.35s ease,
+        transform 0.12s cubic-bezier(.2,.8,.2,1);
+
+    touch-action: manipulation;
+}
+
+.music-point.show {
+    opacity: 1;
+}
+
+.music-point::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    border: 1px solid var(--point-color);
+
+    transform: translate(-50%, -50%);
+
+    opacity: 0.5;
+
+    animation: pointRipple 1.5s ease-out infinite;
+}
+
+.music-point::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    transform: translate(-50%, -50%);
+
+    box-shadow: 0 0 10px white;
+}
+
+@keyframes pointRipple {
+
+    0% {
+        width: 100%;
+        height: 100%;
+        opacity: 0.7;
+    }
+
+    100% {
+        width: 280%;
+        height: 280%;
+        opacity: 0;
+    }
+}
+
+
+/* =========================
+   烟花 Canvas
+   ========================= */
+
+#fireworks {
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    pointer-events: none;
+
+    z-index: 100;
+
+}
+/* =========================
+   启动页
+========================= */
+
+#splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+    animation: splashFadeOut 0.6s ease 1.5s forwards;
+}
+
+
+/* 绿色音乐 Logo */
+
+.splash-logo {
+    width: 420px;
+    max-width: 75vw;
+
+    margin-top: 10vh;
+
+    object-fit: contain;
+
+    animation: splashLogoIn 0.8s ease;
+}
+
+
+/* SVIP 区域 */
+
+.splash-member {
+    margin-top: 30vh;
+
+    text-align: center;
+}
+
+
+.splash-title {
+    font-size: 30px;
+    font-weight: 700;
+
+    color: #d5aa3a;
+
+    letter-spacing: 1px;
+}
+
+
+.splash-subtitle {
+    margin-top: 14px;
+
+    font-size: 15px;
+
+    color: #d5aa3a;
+}
+
+
+/* Powered by */
+
+.splash-powered {
+    position: absolute;
+
+    bottom: 5.5vh;
+
+    width: 100%;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #c8c8c8;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* Logo 出现动画 */
+
+@keyframes splashLogoIn {
+
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* 启动页消失 */
+
+@keyframes splashFadeOut {
+
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
+/* =================================
+   QQ音乐首页
+================================= */
+
+#home-page {
+    position: fixed;
+    inset: 0;
+
+    z-index: 90000;
+
+    width: 100vw;
+    height: 100vh;
+
+    box-sizing: border-box;
+
+    background: #f4f8fa;
+
+    color: #111;
+
+    overflow-y: auto;
+
+    padding: 22px 30px 100px;
+
+    font-family:
+        Arial,
+        "Microsoft YaHei",
+        sans-serif;
+}
+
+
+/* 顶部 */
+
+.home-top {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    margin-top: 5px;
+}
+
+
+.search-box {
+    flex: 1;
+
+    height: 44px;
+
+    border-radius: 24px;
+
+    background: #e5ebf0;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 18px;
+
+    color: #777;
+
+    font-size: 15px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+}
+
+
+.search-icon {
+    font-size: 24px;
+
+    margin-right: 8px;
+
+    color: #222;
+}
+
+
+.top-icon,
+.top-money {
+    width: 42px;
+    height: 42px;
+
+    border: 2px solid #111;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 18px;
+}
+
+
+/* 分类 */
+
+.home-nav {
+    display: flex;
+
+    gap: 28px;
+
+    margin-top: 22px;
+
+    overflow-x: auto;
+
+    white-space: nowrap;
+}
+
+
+.nav-item {
+    font-size: 18px;
+
+    color: #444;
+
+    padding: 8px 0;
+}
+
+
+.nav-item.active {
+    color: #000;
+
+    background: #00dc8b;
+
+    border-radius: 24px;
+
+    padding: 9px 20px;
+}
+
+
+/* 推荐卡片 */
+
+.recommend-cards {
+    display: flex;
+
+    gap: 14px;
+
+    margin-top: 18px;
+
+    overflow-x: auto;
+}
+
+
+.recommend-card {
+    flex: 0 0 350px;
+
+    height: 280px;
+
+    border-radius: 18px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 24px;
+
+    box-sizing: border-box;
+}
+
+
+.card-blue {
+    background:
+        linear-gradient(
+            135deg,
+            #38bff0,
+            #7dd4ff
+        );
+}
+
+
+.card-orange {
+    background:
+        linear-gradient(
+            135deg,
+            #ff946d,
+            #ff7e58
+        );
+}
+
+
+.card-title {
+    font-size: 32px;
+
+    line-height: 0.95;
+
+    font-weight: 700;
+
+    color: white;
+}
+
+
+.card-song {
+    position: absolute;
+
+    left: 24px;
+    bottom: 48px;
+
+    color: white;
+
+    font-size: 17px;
+}
+
+
+.card-artist {
+    position: absolute;
+
+    left: 24px;
+    bottom: 22px;
+
+    color: white;
+
+    font-size: 14px;
+}
+
+
+.card-play {
+    position: absolute;
+
+    right: 22px;
+    bottom: 20px;
+
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    font-size: 22px;
+}
+
+
+/* 内容区域 */
+
+.home-section {
+    margin-top: 34px;
+}
+
+
+.section-title {
+    font-size: 24px;
+
+    font-weight: 700;
+
+    margin-bottom: 20px;
+}
+
+
+.section-title span {
+    margin-left: 8px;
+
+    font-size: 18px;
+}
+
+
+/* 歌曲 */
+
+.song-row {
+    display: flex;
+
+    align-items: center;
+
+    min-height: 82px;
+
+    margin-bottom: 12px;
+
+    border-radius: 14px;
+
+    padding: 6px;
+
+    transition: background 0.2s;
+}
+
+
+.song-row:active {
+    background: #e6ecef;
+}
+
+
+.song-cover {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+}
+
+
+.song-cover img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.song-info {
+    flex: 1;
+
+    margin-left: 16px;
+}
+
+
+.song-name {
+    font-size: 18px;
+
+    margin-bottom: 8px;
+}
+
+
+.song-artist {
+    font-size: 15px;
+
+    color: #666;
+}
+
+
+.song-like {
+    font-size: 28px;
+
+    margin-right: 10px;
+}
+
+
+/* 让目标歌曲有点击感 */
+
+.target-song {
+    cursor: pointer;
+}
+
+
+.target-song:active {
+    transform: scale(0.98);
+}
+
+
+/* 典藏 */
+
+.collection-cards {
+    display: flex;
+
+    gap: 16px;
+
+    overflow-x: auto;
+}
+
+
+.collection-card {
+    flex: 0 0 260px;
+
+    height: 250px;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+}
+
+
+.collection-card img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* 底部导航 */
+
+.bottom-nav {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 78px;
+
+    background: rgba(255,255,255,0.96);
+
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    border-top: 1px solid #e5e5e5;
+
+    z-index: 10;
+}
+
+
+.bottom-item {
+    text-align: center;
+
+    color: #444;
+
+    font-size: 13px;
+}
+
+
+.bottom-item div {
+    font-size: 25px;
+
+    margin-bottom: 4px;
+}
+
+
+.bottom-item.active {
+    color: #111;
+
+    font-weight: 700;
+}
+/* =================================
+   歌曲详情页
+================================= */
+
+#song-detail-page {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 91000;
+
+    display: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            #a9d8f7 0%,
+            #eaf4fb 55%,
+            #ffffff 100%
+        );
+
+    color: #294c78;
+
+    overflow-y: auto;
+
+    padding: 25px 30px;
+}
+
+
+/* 顶部 */
+
+.detail-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+
+.detail-top button {
+    border: none;
+
+    background: transparent;
+
+    font-size: 42px;
+
+    color: #41658c;
+
+    cursor: pointer;
+}
+
+
+.detail-actions {
+    font-size: 28px;
+}
+
+
+/* 黑胶 */
+
+.record-area {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 30px;
+}
+
+
+.record {
+    width: 330px;
+
+    height: 330px;
+
+    border-radius: 50%;
+
+    background:
+        repeating-radial-gradient(
+            circle,
+            #72aee3 0px,
+            #72aee3 2px,
+            #659bd0 3px,
+            #72aee3 5px
+        );
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    box-shadow:
+        0 15px 35px rgba(50,100,150,0.2);
+}
+
+
+.record-center {
+    width: 165px;
+
+    height: 165px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+}
+
+
+.record-center img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* 歌曲标题 */
+
+.detail-info {
+    margin-top: 50px;
+}
+
+
+.detail-title {
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: #2f517d;
+}
+
+
+.detail-artist {
+    margin-top: 14px;
+
+    font-size: 20px;
+
+    color: #6682a4;
+}
+
+
+/* 功能 */
+
+.detail-functions {
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    margin-top: 120px;
+
+    font-size: 25px;
+}
+
+
+.detail-functions span {
+    text-align: center;
+}
+
+
+.detail-functions small {
+    display: block;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* 进度 */
+
+.detail-progress {
+    margin-top: 55px;
+}
+
+
+.progress-line {
+    height: 3px;
+
+    background: #b6c5d7;
+
+    position: relative;
+}
+
+
+.progress-dot {
+    width: 12px;
+
+    height: 12px;
+
+    border-radius: 50%;
+
+    background: #294c78;
+
+    position: relative;
+
+    top: 7px;
+
+    z-index: 2;
+}
+
+
+.detail-time {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 12px;
+
+    font-size: 15px;
+
+    color: #607b9c;
+}
+
+
+/* 播放控制 */
+
+.detail-controls {
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    margin-top: 35px;
+}
+
+
+.detail-controls button {
+    border: none;
+
+    background: transparent;
+
+    color: #294c78;
+
+    font-size: 28px;
+
+    cursor: pointer;
+}
+
+
+.detail-play-button {
+    width: 82px;
+
+    height: 82px;
+
+    border-radius: 50%;
+
+    border: 2px solid #294c78 !important;
+
+    font-size: 30px !important;
+
+    background: rgba(255,255,255,0.2) !important;
+}
+/* =================================
+   歌曲详情页
+================================= */
+
+#song-detail-page {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 91000;
+
+    display: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            #a9d8f7 0%,
+            #eaf4fb 55%,
+            #ffffff 100%
+        );
+
+    color: #294c78;
+
+    overflow-y: auto;
+
+    padding: 25px 30px;
+}
+
+
+/* 顶部 */
+
+.detail-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+
+.detail-top button {
+    border: none;
+
+    background: transparent;
+
+    font-size: 42px;
+
+    color: #41658c;
+
+    cursor: pointer;
+}
+
+
+.detail-actions {
+    font-size: 28px;
+}
+
+
+/* 黑胶 */
+
+.record-area {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-top: 30px;
+}
+
+
+.record {
+    width: 330px;
+
+    height: 330px;
+
+    border-radius: 50%;
+
+    background:
+        repeating-radial-gradient(
+            circle,
+            #72aee3 0px,
+            #72aee3 2px,
+            #659bd0 3px,
+            #72aee3 5px
+        );
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    box-shadow:
+        0 15px 35px rgba(50,100,150,0.2);
+}
+
+
+.record-center {
+    width: 165px;
+
+    height: 165px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+}
+
+
+.record-center img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* 歌曲标题 */
+
+.detail-info {
+    margin-top: 50px;
+}
+
+
+.detail-title {
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: #2f517d;
+}
+
+
+.detail-artist {
+    margin-top: 14px;
+
+    font-size: 20px;
+
+    color: #6682a4;
+}
+
+
+/* 功能 */
+
+.detail-functions {
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    margin-top: 120px;
+
+    font-size: 25px;
+}
+
+
+.detail-functions span {
+    text-align: center;
+}
+
+
+.detail-functions small {
+    display: block;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* 进度 */
+
+.detail-progress {
+    margin-top: 55px;
+}
+
+
+.progress-line {
+    height: 3px;
+
+    background: #b6c5d7;
+
+    position: relative;
+}
+
+
+.progress-dot {
+    width: 12px;
+
+    height: 12px;
+
+    border-radius: 50%;
+
+    background: #294c78;
+
+    position: relative;
+
+    top: 7px;
+
+    z-index: 2;
+}
+
+
+.detail-time {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 12px;
+
+    font-size: 15px;
+
+    color: #607b9c;
+}
+
+
+/* 播放控制 */
+
+.detail-controls {
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    margin-top: 35px;
+}
+
+
+.detail-controls button {
+    border: none;
+
+    background: transparent;
+
+    color: #294c78;
+
+    font-size: 28px;
+
+    cursor: pointer;
+}
+
+
+.detail-play-button {
+    width: 82px;
+
+    height: 82px;
+
+    border-radius: 50%;
+
+    border: 2px solid #294c78 !important;
+
+    font-size: 30px !important;
+
+    background: rgba(255,255,255,0.2) !important;
+}
+/* =========================
+   AI 互动模式入口 Play
+   ========================= */
+
+   .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.play-ai {
+    font-size: 20px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.25s ease;
+}
+
+.play-ai sup {
+    font-size: 11px;
+    margin-left: 2px;
+    vertical-align: super;
+}
+
+.play-ai:hover {
+    color: #31C27C;
+    transform: scale(1.05);
+}
+
+.play-ai:active {
+    transform: scale(0.96);
+}
+/* =================================
+   普通歌词模式
+   ================================= */
+
+   .normal-mode #game-area {
+    display: none;
+}
+
+
+/* =================================
+   AI 音乐互动模式
+   ================================= */
+
+.interaction-mode #game-area {
+    display: block;
+}
+
+.interaction-mode .play-ai {
+    display: none;
+}
+
+
+/* 互动模式下，歌词稍微弱化 */
+
+.interaction-mode .lyrics {
+    opacity: 0.65;
+}
