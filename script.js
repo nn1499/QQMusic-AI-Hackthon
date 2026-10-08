@@ -1265,3 +1265,17 @@ if (enterGame && musicPage) {
     });
 
 }
+// ==========================================
+// 返回键逻辑
+// ==========================================
+document.getElementById('detail-back')?.addEventListener('click', function() {
+    console.log("返回按钮被点击了！"); // 用于调试
+    
+    const detailPage = document.getElementById('song-detail-page');
+    const playerPage = document.getElementById('musicPage');
+    
+    if (detailPage && playerPage) {
+        detailPage.style.display = 'none';
+        playerPage.style.display = 'block'; // 如果还是空白，改成 'flex' 试试
+    }
+});
